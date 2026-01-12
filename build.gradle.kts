@@ -1,9 +1,11 @@
 import org.jlleitschuh.gradle.ktlint.KtlintExtension
 
 plugins {
+    id("java")
     id("org.springframework.boot") version "4.0.1"
     id("io.spring.dependency-management") version "1.1.7"
     id("org.jlleitschuh.gradle.ktlint") version "14.0.1"
+    id("maven-publish")
     kotlin("jvm") version "2.2.21"
     kotlin("kapt") version "2.2.21"
     kotlin("plugin.spring") version "2.2.21"
@@ -21,6 +23,7 @@ subprojects {
         plugin("org.springframework.boot")
         plugin("io.spring.dependency-management")
         plugin("org.jlleitschuh.gradle.ktlint")
+        plugin("maven-publish")
         plugin("kotlin")
         plugin("kotlin-spring")
     }
@@ -32,6 +35,17 @@ subprojects {
     java {
         toolchain {
             languageVersion = JavaLanguageVersion.of(17)
+        }
+
+        withJavadocJar()
+        withSourcesJar()
+    }
+
+    publishing {
+        publications {
+            create<MavenPublication>("mavenJava") {
+                from(components["java"])
+            }
         }
     }
 
@@ -68,9 +82,12 @@ subprojects {
     configure<KtlintExtension> {
         verbose.set(true)
     }
+
+    tasks.bootJar { enabled = false }
+    tasks.jar { archiveClassifier = "" }
 }
 
-project("core") {
+project(":core") {
     dependencies {
         compileOnly("org.springframework.boot:spring-boot-starter")
         compileOnly("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -81,7 +98,7 @@ project("core") {
     }
 }
 
-project("mvc") {
+project(":mvc") {
     dependencies {
         implementation(project(":core"))
 
