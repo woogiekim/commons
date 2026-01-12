@@ -2,6 +2,8 @@ package io.github.woogiekim.commons.core.exception;
 
 import static io.github.woogiekim.commons.core.support.StringHelper.lenientFormat;
 
+import java.util.function.Supplier;
+
 public final class Preconditions {
 
     private Preconditions() {
@@ -10,6 +12,14 @@ public final class Preconditions {
     public static <T> T requireNotNull(T obj) {
         if (obj == null) {
             throw new NullPointerException();
+        }
+
+        return obj;
+    }
+
+    public static <T> T requireNotNull(T obj, Supplier<String> messageSupplier) {
+        if (obj == null) {
+            throw new NullPointerException(messageSupplier.get());
         }
 
         return obj;
@@ -43,6 +53,12 @@ public final class Preconditions {
         }
     }
 
+    public static void require(boolean condition, Supplier<String> messageSupplier) {
+        if (!condition) {
+            throw new IllegalArgumentException(messageSupplier.get());
+        }
+    }
+
     public static void require(boolean condition, String message, Object... args) {
         if (!condition) {
             throw new IllegalArgumentException(lenientFormat(message, args));
@@ -52,6 +68,14 @@ public final class Preconditions {
     public static <T> T checkNotNull(T obj) {
         if (obj == null) {
             throw new NullPointerException();
+        }
+
+        return obj;
+    }
+
+    public static <T> T checkNotNull(T obj, Supplier<String> messageSupplier) {
+        if (obj == null) {
+            throw new NullPointerException(messageSupplier.get());
         }
 
         return obj;
@@ -76,6 +100,12 @@ public final class Preconditions {
     public static void check(boolean condition) {
         if (!condition) {
             throw new IllegalStateException();
+        }
+    }
+
+    public static void check(boolean condition, Supplier<String> messageSupplier) {
+        if (!condition) {
+            throw new IllegalStateException(messageSupplier.get());
         }
     }
 
